@@ -1,0 +1,283 @@
+package kr.co.iei.board.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+import kr.co.iei.board.model.dao.BoardDao;
+import kr.co.iei.board.model.service.BoardService;
+import kr.co.iei.board.model.service.MemberService;
+import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.Member;
+
+public class Controller {
+	private Scanner sc;						//키보드값 입력받기위한 객체
+	private BoardService boardService;		//EXAM_BOARD 테이블에 데이터 작업하는경우 사용할 서비스
+	private MemberService memberService;	//EXAM_MEMBER 테이블에 데이터 작업을 하는 경우 사용할 서비스	
+	private Member loginMember;				//로그인 성공하면 회원 정보를 저장할 객체
+	public Controller() {
+		super();
+		sc = new Scanner(System.in);
+		boardService = new BoardService();
+		memberService = new MemberService();
+		loginMember = null;
+	}
+	
+	
+	public void main() {
+		while(true) {
+			//로그인 상태에 따라서 다른 메뉴를 보여줌
+			if(loginMember == null) {
+				noLoginMenu();
+			}else {
+				loginMenu();
+			}
+		}
+	}
+	
+	
+
+	
+	////////////////////////////////////////////////////////////////////
+	public void noLoginMenu() {
+		System.out.println("\n---------- KH커뮤니티 ----------\n");
+		System.out.println("1. 로그인하기");
+		System.out.println("2. 회원가입");
+		System.out.println("3. 아이디 찾기");
+		System.out.println("0. 프로그램 종료");
+		System.out.print("선택 >> ");
+		int select = sc.nextInt();
+		switch(select) {
+		case 1:
+			login();
+			break;
+		case 2:
+			insertMember();
+			break;
+		case 3:
+			searchId();
+			break;
+		case 0:
+			return;
+		default:
+			break;
+		}
+	}
+
+	//로그인 - 로그인이 되면 사용자의 모든 정보를 받아와서 저장해둬야 한다. 
+	public void login() {
+		System.out.println("\n---------- 로그인 ----------\n");
+		//select * from exam_member where member_id ? and member_pw=?
+		Member m = new Member();
+		System.out.print("ID 입력 : ");
+		m.setMemberId(sc.next());
+		System.out.print("PW 입력 : ");
+		m.setMemberPw(sc.next());
+		Member member = memberService.login(m);
+		if(member == null) {
+			System.out.println("아이디 또는 비밀번호를 확인하세요.");
+		}else {
+			System.out.println("로그인 성공!");
+			loginMember = member;
+		}
+	}
+
+	
+	//회원가입
+	public void insertMember() {
+		System.out.println("\n---------- 회원가입 ----------\n");
+		Member m = new Member();
+		while(true) {
+			Member member = new Member();//아이디 중복 체크
+			System.out.print("ID 입력 : ");
+			String memberId = sc.next();
+			member.setMemberId(memberId);
+			//"select * from member_tbl where member_id=?
+			member = memberService.selectMemberSearch(member);//아이디 중복체크(아이디가 있으면 !null)
+			if(member.getMemberId() == null) {
+				m.setMemberId(memberId);
+				break;
+			}else {
+				System.out.println("이미 가입된 아이디입니다.");
+			}
+		}
+		
+		System.out.print("PW 입력 : ");
+		String memberPw = sc.next();
+		System.out.print("이름 입력 : ");
+		String memberName = sc.next();
+		System.out.print("전화번호 입력(ex.01011112222) : ");
+		String memberPhon = sc.next();
+		m.setMemberName(memberName);
+		m.setMemberPhone(memberPhon);
+		m.setMemberPw(memberPw);
+		int result = memberService.insertMember(m);
+		if(result > 0) {
+			System.out.println("회원 가입 성공");
+		}else{
+			System.out.println("회원 가입 실패");
+		}
+	}//회원가입();
+	
+	public void searchId() {
+		System.out.println("\n---------- 아이디 찾기 ----------\n");
+		System.out.print("이름 입력 : ");
+		String memberName = sc.next();
+		System.out.print("전화번호 입력 : ");
+		String memberPhone = sc.next();
+		Member m = new Member();
+		m.setMemberName(memberName);
+		m.setMemberPhone(memberPhone);
+		String memberId = memberService.searchId(m);
+		if(memberId != null) {
+			System.out.println("아이디는 ["+memberId+"] 입니다.");
+		}else {
+			System.out.println("일치하는 정보가 없습니다.");
+		}
+		/*내 로직
+		Member member = memberService.selectMemberNamePhone(m);
+		if(member != null) {
+			System.out.println("["+member.getMemberId()+"] 입니다.");
+		}else {
+			System.out.println("일치하는 정보가 없습니다.");
+		}
+		*/
+	}
+	
+	///////////////////////////////////////////////////////////////////
+	public void loginMenu() {
+		while(true) {
+			System.out.println("---------- KH커뮤니티 ----------");
+			System.out.println("1. 게시물 목록 보기");
+			System.out.println("2. 게시물 상세 보기");
+			System.out.println("3. 게시물 등록");
+			System.out.println("4. 게시물 수정");
+			System.out.println("5. 게시물 삭제");
+			System.out.println("6. 내정보 보기");
+			System.out.println("7. 내 정보 변경");
+			System.out.println("8. 회원 탈퇴");
+			System.out.println("0. 로그아웃");
+			System.out.print("선택 > ");
+			switch(sc.nextInt()) {
+			case 1:
+				contentList();
+				break;
+			case 2:
+				viewContent();
+				break;
+			case 3:
+				insertContent();
+				break;
+			case 4:
+				updateContent();
+				break;
+			case 5:
+				break;
+			case 6:
+				selectLoginMember();
+				break;
+			case 7:
+				updateLoginMember();
+				break;
+			case 8:
+				break;
+			case 0:
+				return;
+			default :
+				break;
+			}
+		}
+	}
+
+	private void updateContent() {
+		System.out.println("게시물 번호 입력 : ");
+		int contentNo = sc.nextInt();
+		Board board = boardService.updateContent(contentNo);
+		if(loginMember.getMemberNo() == board.getBoardWriter()) {
+			System.out.println("제목 입력 : ");
+			sc.nextLine();
+			String title = sc.nextLine();
+			System.out.println("내용 입력 : ");
+			sc.nextLine();
+			String content = sc.nextLine();
+			board.setBoardTitle(title);
+			board.setBoardContent(content);
+			int result = boardService.updateContent(board);
+			if(result > 0) {
+				System.out.println("게시글 수정 성공!");
+			}else {
+				System.out.println("게시글 수정 실패 ㅠ");
+			}
+		}else {
+			System.out.println("작성자만 수정이 가능합니다.");
+		}
+	}
+
+
+	private void viewContent() {
+		System.out.print("게시물 번호 입력 : ");
+		int contentNo = sc.nextInt();
+		Board board = boardService.viewContent(contentNo);
+		if(board == null) {
+			System.out.println("등록된 게시물이 없습니다.");
+		}else {
+			System.out.println("------------ 게시물 정보 ----------");
+			System.out.println("게시물 번호 : "+board.getBoardNo());
+			System.out.println("게시물 제목 : "+board.getBoardTitle());
+			System.out.println("게시물 내용 : "+board.getBoardContent());
+			System.out.println("게시물 작성자 : "+board.getBoardWriterName());
+			System.out.println("게시물 조회수 : "+board.getReadCount());
+			System.out.println("게시물 작성일 : "+board.getWriteDate());
+		}
+		
+	}
+
+
+	private void contentList() {
+		System.out.println("----------- 게시물 목록 ----------");
+		ArrayList<Board> list = boardService.contentList();
+		if(list.isEmpty()) {
+			System.out.println("등록된 게시물이 없습니다.");
+		}else {
+			for(Board b : list) {
+				System.out.println(b.getBoardNo()+"\t"+b.getBoardTitle()+"\t\t"+b.getBoardWriterName()+"\t"+b.getReadCount()+"\t"+b.getWriteDate());
+			}
+		}
+	}
+
+
+	private void insertContent() {
+		System.out.print("제목 입력 : ");		
+		sc.nextLine();
+		String title = sc.nextLine();
+		System.out.print("내용 입력 : ");
+		String content = sc.nextLine();
+		Board b = new Board(0, title, content, loginMember.getMemberNo(), 0, null);
+		int result = boardService.insertContent(b);
+		if(result > 0) {
+			System.out.println("게시글 등록 성공!!");
+		}else {
+			System.out.println("게시글 등록 실패 ㅠㅠ");
+		}
+	}
+
+
+	private void updateLoginMember() {
+		System.out.println("\n---------- 내 정보 변경 -----------\n");
+		System.out.print("변경할 ");
+	}
+
+	private void selectLoginMember() {
+		System.out.println("\n---------- 내 정보 보기 -----------\n");
+		System.out.println("회원번호 : "+loginMember.getMemberNo());
+		System.out.println("아이디 : "+loginMember.getMemberId());
+		System.out.println("이름 : "+loginMember.getMemberName());
+		System.out.println("비밀번호 : "+loginMember.getMemberPw());
+		System.out.println("전화번호 : "+loginMember.getMemberPhone());
+	}
+
+
+
+	
+	
+}

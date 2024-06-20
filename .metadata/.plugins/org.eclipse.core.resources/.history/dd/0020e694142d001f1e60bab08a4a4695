@@ -1,0 +1,48 @@
+package kr.co.iei.member.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import kr.co.iei.member.model.vo.Member;
+
+public class MemberDao {
+	public Member getMember(ResultSet rset) {
+		Member m = new Member();
+		try {
+			m.setEnrollDate(rset.getDate("enroll_date"));
+			m.setMemberAge(rset.getInt("member_age"));
+			m.setMemberGender(rset.getString("member_gender"));
+			m.setMemberId(rset.getString("member_id"));
+			m.setMemberName(rset.getString("member_name"));
+			m.setMemberPhone(rset.getString("member_phone"));
+			m.setMemberPw(rset.getString("member_pw"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return m;
+	}
+
+	public Member selectMemberId(Connection conn, String memberId) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		Member m = null;
+		String query = "select * from member_tbl where member_id =?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, memberId);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				m = getMember(rset);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}

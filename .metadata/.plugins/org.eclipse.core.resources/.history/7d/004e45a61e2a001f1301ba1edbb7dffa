@@ -1,0 +1,11 @@
+package kr.co.iei.todo.vo;
+
+import java.sql.Date;
+
+public class Todo {
+	private int todoNo;
+	private String todoContent;
+	private String todoWriter;
+	private String todoDone;
+	private Date todoDate;
+}

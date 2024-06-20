@@ -1,0 +1,47 @@
+package kr.co.iei.board.model.service;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+
+import kr.co.iei.board.common.JDBCTemplate;
+import kr.co.iei.board.model.dao.BoardDao;
+import kr.co.iei.board.model.vo.Board;
+
+public class BoardService {
+	private BoardDao boardDao;
+
+	public BoardService() {
+		super();
+		boardDao = new BoardDao();
+	}
+
+	public int insertContent(Board b) {
+		Connection conn = JDBCTemplate.getConnection();
+		int result = boardDao.insertContent(conn, b);
+		if(result > 0) {
+			JDBCTemplate.commit(conn);
+		}else {
+			JDBCTemplate.rollback(conn);
+		}
+		JDBCTemplate.close(conn);
+		return result;
+	}
+
+	public ArrayList<Board> contentList() {
+		Connection conn = JDBCTemplate.getConnection();
+		ArrayList<Board> list = boardDao.contentList(conn);
+		JDBCTemplate.close(conn);
+		return list;
+	}
+
+	public Board viewContent(int selectContentNum) {
+		Connection conn = JDBCTemplate.getConnection();
+		Board board = boardDao.viewContent(conn, selectContentNum);
+		if(board != null) {
+			int result = boardDao.count(conn, selectContentNum);
+		}
+		
+		return board;
+	}
+	
+}

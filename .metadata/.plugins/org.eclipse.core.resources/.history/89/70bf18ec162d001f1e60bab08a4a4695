@@ -1,0 +1,78 @@
+package kr.co.iei.member.controller;
+
+import java.util.Scanner;
+
+import kr.co.iei.member.model.service.MemberService;
+import kr.co.iei.member.model.vo.Member;
+
+public class MemberController {
+	private Scanner sc;
+	private MemberService memberService;
+	public MemberController() {
+		super();
+		sc = new Scanner(System.in);
+		memberService = new MemberService();
+	}
+	
+	public void main() {
+		while (true) {
+			System.out.println("\n---------- 회원 관리 프로그램v5 ----------\n");
+			System.out.println("1. 전체 회원 조회");
+			System.out.println("2. 아이디로 회원 조회");
+			System.out.println("3. 이름으로 회원 조회");
+			System.out.println("4. 회원 가입");
+			System.out.println("5. 회원 정보 수정");
+			System.out.println("6. 회원 탈퇴");
+			System.out.println("7. 성별로 회원 조회");
+			System.out.print("선택 >> ");
+			int select = sc.nextInt();
+			switch (select) {
+			case 1:
+				//selectAllMember();
+				break;
+			case 2:
+				selectMemberId();
+				break;
+			case 3:
+				//selectMemberName();
+				break;
+			case 4:
+				//insertMember();
+				break;
+			case 5:
+				//updateMember();
+				break;
+			case 6:
+				//deleteMember();
+				break;
+			case 7:
+				//selectMemberGender();
+				break;
+			case 0:
+				return;
+			default:
+				break;
+
+			}
+		}
+	}
+
+	private void selectMemberId() {
+		System.out.println("\n---------- 아이디로 회원 조회 ----------\n");
+		System.out.print("조회 할 아이디 입력 : ");
+		String memberId = sc.next();
+		Member m = memberService.selectMemberId(memberId);
+		if(m == null) {
+			System.out.println("회원 정보를 조회할 수 없습니다.");
+		}else {
+			System.out.println("아이디 : "+m.getMemberId());
+			System.out.println("비밀번호 : "+m.getMemberPw());
+			System.out.println("이름 : "+m.getMemberName());
+			System.out.println("전화번호 : "+m.getMemberPhone());
+			System.out.println("나이 : "+m.getMemberAge());
+			System.out.println("성별 : "+m.getMemberGender());
+			System.out.println("가입일 : "+m.getEnrollDate());
+		}
+	}
+	
+}

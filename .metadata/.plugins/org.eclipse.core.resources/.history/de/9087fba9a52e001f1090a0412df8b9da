@@ -1,0 +1,33 @@
+package kr.co.iei.book.model.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import kr.co.iei.book.common.JDBCTemplate;
+import kr.co.iei.book.model.vo.Book;
+
+public class BookDao {
+
+	public int insertBook(Connection conn, Book book) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "insert into book_tbl values(book_tbl_seq.nextval,?,?,?,?)";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, book.getGenre());
+			pstmt.setString(2, book.getTitle());
+			pstmt.setString(3, book.getAuthor());
+			pstmt.setInt(4, book.getStock());
+			result =pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			JDBCTemplate.close(pstmt);
+		}
+		
+		return result;
+	}
+
+}

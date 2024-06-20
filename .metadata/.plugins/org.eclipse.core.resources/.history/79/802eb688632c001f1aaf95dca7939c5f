@@ -1,0 +1,80 @@
+package kr.co.iei.member.controller;
+
+import java.util.Scanner;
+
+import kr.co.iei.member.model.model.vo.Member;
+import kr.co.iei.member.model.service.MemberService;
+
+public class MemberController {
+	private Scanner sc = null;
+	private MemberService memberService;
+	public MemberController() {
+		super();
+		sc = new Scanner(System.in);
+		memberService = new MemberService();
+	}
+	
+	public void main() {
+		while(true) {
+			System.out.println("\n---------- 회원 관리 프로그램v4 ----------\n");
+			System.out.println("1. 전체 회원 조회");
+			System.out.println("2. 아이디로 회원 조회");
+			System.out.println("3. 이름으로 회원 조회");
+			System.out.println("4. 회원 가입");
+			System.out.println("5. 회원 정보 수정");
+			System.out.println("6. 회원 탈퇴");
+			System.out.print("선택 >> ");
+			int select = sc.nextInt();
+			switch(select) {
+			case 1:
+				break;
+			case 2:
+				selectMemberId();
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				updateMember();
+				break;
+			case 6:
+				break;
+			case 0:
+				return;
+			default:
+				break;
+			
+			}
+		}
+	}
+
+
+	private void selectMemberId() {
+		System.out.println("\n---------- 아이디로 회원 조회 ----------\n");
+		//select * from member_tbl where member_id=?
+		System.out.print("조회 할 회원 아이디 입력 : ");
+		String memberId = sc.next();
+		//컨트롤러는 서비스에게 요청
+		Member m = memberService.selectMemberId(memberId);
+		if(m == null) {
+			System.out.println("회원 정보를 조회할 수 없습니다");
+		}else {
+			System.out.println("아이디 : "+m.getMemberId());
+			System.out.println("비밀번호 : "+m.getMemberId());
+			System.out.println("이름 : "+m.getMemberName());
+			System.out.println("전화번호 : "+m.getMemberPhone());
+			System.out.println("나이 : "+m.getMemberAge());
+			System.out.println("성별 : "+m.getMemberGender());
+			System.out.println("가입일 : "+m.getEnrollDate());
+		}
+	}
+	
+	private void updateMember() {
+		System.out.println("\n---------- 회원 정보 수정 ----------\n");
+		//update member_tbl set member_pw=?,member_name=?,member_phone=? where member_id=?;
+		System.out.println("수정 할 회원 아이디 입력 : ");
+		String memberId = sc.next();
+		Member m = memberService.selectMemberId(memberId);
+	}
+}

@@ -1,0 +1,31 @@
+package kr.co.iei.book.controller;
+
+import java.util.Scanner;
+
+import kr.co.iei.book.model.service.BookService;
+import kr.co.iei.book.model.service.MemberService;
+import kr.co.iei.book.model.service.RentalService;
+
+public class Controller {
+	private Scanner sc;
+	private BookService bookService;
+	private MemberService memberService;
+	private RentalService rentalService;
+
+	public Controller() {
+		super();
+		sc = new Scanner(System.in);
+		bookService = new BookService();
+		memberService = new MemberService();
+		rentalService = new RentalService();
+	}
+	
+	public void main() {
+		System.out.println("---------- KH 도서관 ----------");
+		System.out.println("1. 로그인");
+		System.out.println("2. 회원가입");
+		System.out.println("3. 종료");
+		
+	}
+	
+}

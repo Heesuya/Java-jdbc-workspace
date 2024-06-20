@@ -1,0 +1,58 @@
+package kr.co.iei.book.model.vo;
+
+public class Book {
+	private int bookNum;
+	private String genre;
+	private String title;
+	private String author;
+	private int quatity;
+	public Book() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Book(int bookNum, String genre, String title, String author, int quatity) {
+		super();
+		this.bookNum = bookNum;
+		this.genre = genre;
+		this.title = title;
+		this.author = author;
+		this.quatity = quatity;
+	}
+	public int getBookNum() {
+		return bookNum;
+	}
+	public void setBookNum(int bookNum) {
+		this.bookNum = bookNum;
+	}
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getAuthor() {
+		return author;
+	}
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	public int getQuatity() {
+		return quatity;
+	}
+	public void setQuatity(int quatity) {
+		this.quatity = quatity;
+	}
+	@Override
+	public String toString() {
+		return "Book [bookNum=" + bookNum + ", genre=" + genre + ", title=" + title + ", author=" + author
+				+ ", quatity=" + quatity + "]";
+	}
+	
+	
+}

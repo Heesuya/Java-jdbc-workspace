@@ -1,0 +1,5 @@
+package kr.co.iei.book.model.vo;
+
+public class Member {
+
+}

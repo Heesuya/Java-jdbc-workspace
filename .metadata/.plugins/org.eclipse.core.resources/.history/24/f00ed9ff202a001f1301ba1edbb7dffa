@@ -1,0 +1,16 @@
+package kr.co.iei.todo.controller;
+
+import java.util.Scanner;
+
+import kr.co.iei.todo.dao.TodoDao;
+
+public class TodoController {
+	Scanner sc = null;
+	TodoDao todoDao = null;
+	public TodoController() {
+		super();
+		sc = new Scanner(System.in);
+		todoDao = new TodoDao();
+	}
+	
+}

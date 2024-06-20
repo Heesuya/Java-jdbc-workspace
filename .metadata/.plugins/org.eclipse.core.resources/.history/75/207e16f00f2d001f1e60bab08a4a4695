@@ -1,0 +1,25 @@
+package kr.co.iei.member.dao;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import kr.co.iei.member.model.vo.Member;
+
+public class MemberDao {
+	public Member getMember(ResultSet rset) {
+		Member m = new Member();
+		try {
+			m.setEnrollDate(rset.getDate("enroll_date"));
+			m.setMemberAge(rset.getInt("member_age"));
+			m.setMemberGender(rset.getString("member_gender"));
+			m.setMemberId(rset.getString("member_id"));
+			m.setMemberName(rset.getString("member_name"));
+			m.setMemberPhone(rset.getString("member_phone"));
+			m.setMemberPw(rset.getString("member_pw"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return m;
+	}
+}

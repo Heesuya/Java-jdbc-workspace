@@ -1,0 +1,24 @@
+package kr.co.iei.book.controller;
+
+import java.util.Scanner;
+
+import kr.co.iei.book.model.service.BookService;
+import kr.co.iei.book.model.service.MemberService;
+import kr.co.iei.book.model.service.RentalService;
+
+public class Controller {
+	Scanner sc;
+	BookService bookService;
+	MemberService memberService;
+	RentalService rentalService;
+
+	public Controller() {
+		super();
+		sc = new Scanner(System.in);
+		bookService = new BookService();
+		memberService = new MemberService();
+		rentalService = new RentalService();
+	}
+	
+	
+}

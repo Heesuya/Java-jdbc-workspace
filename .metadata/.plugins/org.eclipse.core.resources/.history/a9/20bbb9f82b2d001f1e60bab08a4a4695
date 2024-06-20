@@ -1,0 +1,300 @@
+package kr.co.iei.member.model.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import kr.co.iei.member.model.model.vo.Member;
+import kr.co.iei.member.model.service.MemberService;
+
+public class MemberDao {
+
+	
+	
+
+	public Member selectMemberId(Connection conn, String memberId) {
+		//01. 반환할 객체 선언
+		//Connection은 DAO가 관리하는게아니라 Service 관리
+		//Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		//0-2. 리턴할 객체 선언
+		Member m = null;
+		//0-3. query
+		String query = "select * from member_tbl where member_id=?";
+		try {
+			//1~6 단계 작업 중 1,2은 service에서 이미 수행했고 그 결과인 Connction을 매개변수로 받음
+			//Dao에서는 1,2작업을 하지않고 매개변수로 받은 Connection을 사용
+			//3. PreparedStatement 객체 생성
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, memberId);
+			//4,5. 쿼리문 수행하고 결과 저장
+			rset = pstmt.executeQuery();
+
+			m = getMember(rset);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				//6. 자원반환
+				rset.close();
+				pstmt.close();
+				//conn.close(); //Connction은 Service역할, Connection을 닫는것도 Service가 수행
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return m;
+	}
+
+	public int updateMember(Connection conn, Member member) {
+		PreparedStatement pstmt = null;
+		
+		int result = 0;
+		
+		String query = "update member_tbl set member_pw=?, member_Name=?,member_phone=? where member_id=?";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, member.getMemberPw());
+			pstmt.setString(2, member.getMemberName());
+			pstmt.setString(3, member.getMemberPhone());
+			pstmt.setString(4, member.getMemberId());
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public ArrayList<Member> selectAllMember(Connection conn) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Member> list =new ArrayList<Member>();
+		String query = "select * from member_tbl";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			rset = pstmt.executeQuery();
+			//메소드로 만들어놓은걸 코드 줄이자. 
+			while(rset.next()) {
+				Member m = getMember(rset);
+				list.add(m);
+			}
+			/*
+			while(rset.next()) {
+				Member m = new Member();
+				m.setEnrollDate(rset.getDate("enroll_date"));
+				m.setMemberAge(rset.getInt("member_age"));
+				m.setMemberGender(rset.getString("member_gender"));
+				m.setMemberId(rset.getString("member_id"));
+				m.setMemberName(rset.getString("member_name"));
+				m.setMemberPhone(rset.getString("member_phone"));
+				m.setMemberPw(rset.getString("member_pw"));
+				list.add(m);
+			}
+			*/
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public ArrayList<Member> selectMemberName(Connection conn, String next) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Member> list = new ArrayList<Member>();
+		String query = "select * from member_tbl where member_name like '%'||?||'%'";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, next);
+			rset = pstmt.executeQuery();
+			while(rset.next()) {
+				Member m = getMember(rset);
+				/*
+				Member m = new Member();
+				m.setEnrollDate(rset.getDate("enroll_date"));
+				m.setMemberAge(rset.getInt("member_age"));
+				m.setMemberGender(rset.getString("member_gender"));
+				m.setMemberId(rset.getString("member_id"));
+				m.setMemberName(rset.getString("member_name"));
+				m.setMemberPhone(rset.getString("member_phone"));
+				m.setMemberPw(rset.getString("member_pw"));
+				*/
+				list.add(m);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public int insertMember(Connection conn, Member m) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "insert into member_tbl values(?,?,?,?,?,?,sysdate)";
+		
+		try {
+			pstmt =conn.prepareStatement(query);
+			int i = 1;
+			pstmt.setString(i++, m.getMemberId());
+			pstmt.setString(i++, m.getMemberPw());
+			pstmt.setString(i++, m.getMemberName());
+			pstmt.setString(i++, m.getMemberPhone());
+			pstmt.setInt(i++, m.getMemberAge());
+			pstmt.setString(i++, m.getMemberGender());
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public int deleteMember(Connection conn, String id) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "delete member_tbl where member_id =?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, id);
+			result = pstmt.executeUpdate();
+			if(result > 0) {
+				conn.commit();
+			}else {
+				conn.rollback();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public int insertDelMember(Connection conn, Member m) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "insert into del_member_tbl values(?,?,?,sysdate)";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, m.getMemberId());
+			pstmt.setString(2, m.getMemberName());
+			pstmt.setString(3, m.getMemberPhone());
+			result = pstmt.executeUpdate();
+			if(result > 0) {
+				conn.commit();
+			}else {
+				conn.rollback();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	//조회결과를 특정 객체로 묶어주는 메소드 
+	//-> 이런 메소드를 사용할때 주의사항
+	//-> select 조회 결과의 컬럼이 모두 일치해야함
+	public Member getMember(ResultSet rset) {
+		Member m = new Member();
+		try {
+			m.setEnrollDate(rset.getDate("enroll_date"));
+			m.setMemberAge(rset.getInt("member_age"));
+			m.setMemberGender(rset.getString("member_gender"));
+			m.setMemberId(rset.getString("member_id"));
+			m.setMemberName(rset.getString("member_name"));
+			m.setMemberPhone(rset.getString("member_phone"));
+			m.setMemberPw(rset.getString("member_pw"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return m;
+	}
+
+	public ArrayList<Member> selectMemberGender(Connection conn, String memberGender) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Member> list = new ArrayList<Member>();
+		String query = "select member_id,member_name,member_phone,member_gender from member_tbl where member_gender = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, memberGender);
+			rset = pstmt.executeQuery();
+			while(rset.next()) {
+				Member m = new Member();
+				m.setEnrollDate(rset.getDate("enroll_date"));
+				m.setMemberId(rset.getString("member_id"));
+				list.add(m);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+}

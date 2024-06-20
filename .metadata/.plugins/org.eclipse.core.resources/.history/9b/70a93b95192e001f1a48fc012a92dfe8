@@ -1,0 +1,5 @@
+package kr.co.iei.book.model.service;
+
+public class BookService {
+
+}

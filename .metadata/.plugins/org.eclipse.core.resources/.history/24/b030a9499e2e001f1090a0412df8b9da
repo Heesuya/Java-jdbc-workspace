@@ -1,0 +1,5 @@
+package jdbc.member.model.service;
+
+public class MemberService {
+
+}

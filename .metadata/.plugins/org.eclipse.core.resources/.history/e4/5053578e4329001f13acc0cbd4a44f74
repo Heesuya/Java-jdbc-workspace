@@ -1,0 +1,180 @@
+package kr.co.iei.member.model.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import kr.co.iei.member.model.vo.Member;
+
+//DAO(Data Access Object) : 데이터베이스에 접근해서 데이터를 쿼리를 수행하고 결과를 리턴하는 기능을 모아둠
+public class MemberDao {
+	//dao의 메소드 1개당 1개의 쿼리만 수행하고 결과를 리턴 
+
+	public Member selectMemberId(String searchId) {
+		//0-1. 반환할 객체 미리 선언
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		//0.2. 쿼리 수행결과를 저장할 변수 선언 / 컨트롤러로 되돌려줄 객체
+		//query : select * from member_tbl where member_id ='아이디';
+		Member m = null;//조회 성공하면 회원 1명정보 저장한 Member객체/실패하면 null
+		//0-3. 쿼리문 작성
+		String query = "select * from member_tbl where member_id = '"+searchId+"'";
+		
+		try {
+			//1. 사용할 클래스 지정
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			//2. Connection 객체 생성
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:xe", "jdbc_test", "1234");
+			//3. Statement 객체 생성
+			stmt = conn.createStatement();
+			//4. 쿼리문 수행하고 결과 받아옴
+			//5. 받아온 결과를 저장 
+			rset = stmt.executeQuery(query);
+			if(rset.next()) {
+				m = new Member();
+				m.setEnrollDate(rset.getDate("enroll_date"));
+				m.setMemberAge(rset.getInt("member_age"));
+				m.setMemberGender(rset.getString("member_gender"));
+				m.setMemberId(rset.getString("member_id"));
+				m.setMemberName(rset.getString("member_name"));
+				m.setMemberPhone(rset.getString("member_phone"));
+				m.setMemberPw(rset.getString("member_pw"));
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return m;
+	}
+
+	public ArrayList<Member> selectAllMember() {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		String query = "select * from member_tbl";
+		
+		ArrayList<Member> list = new ArrayList<Member>();
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:xe", "jdbc_test", "1234");
+			stmt = conn.createStatement();
+			
+			rset = stmt.executeQuery(query);
+		while(rset.next()) {
+				String memberId = rset.getString("member_id");
+				String memberPw = rset.getString("member_pw");
+				String memberName = rset.getString("member_name");
+				String memberPhone = rset.getString("member_phone");
+				int memberAge = rset.getInt("member_age");
+				String memberGender = rset.getString("member_gender");
+				Date enrollDate = rset.getDate("enroll_date");
+				Member m = new Member(memberId, memberPw, memberName, memberPhone, memberAge, memberGender, enrollDate);
+				list.add(m);
+		}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return list;
+	}
+
+	public static ArrayList<Member> memberSearchName(String searchName) {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		String query = "select * from member_tbl where member_name like '%"+searchName+"%'";
+		ArrayList<Member> list = new ArrayList<Member>();
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:xe", "jdbc_test", "1234");
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(query);
+			while(rset.next()) {
+				Member m = new Member(rset.getString("member_id"), rset.getString("member_pw"), rset.getString("member_name"), rset.getString("member_phone"), rset.getInt("member_age"), 
+							rset.getString("member_gender"), rset.getDate("enroll_date"));
+				list.add(m);
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public int insertMember(Member m) {
+		Connection conn = null;
+		Statement stmt = null;
+		int result = 0;
+		String query = "insert into member_tbl ("
+				+"'"+m.getMemberId()+"'"
+				+"'"+m.getMemberPw()+"'"
+				+"'"+m.getMemberName()+"'"
+				+"'"+m.getMemberPhone()+"'"
+				+"'"+m.getMemberAge()+"'"
+				+"'"+m.getMemberGender()+"'"
+				+"sysdate";
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:xe", "jdbc_test", "1234");
+			stmt = conn.createStatement();
+			result = stmt.executeUpdate(query);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	
+	
+}

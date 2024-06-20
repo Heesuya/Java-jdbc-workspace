@@ -1,0 +1,12 @@
+package kr.co.iei.book.model.vo;
+
+import java.sql.Date;
+
+public class Rental {
+	private int rentalNo;
+	private Date rentalDate;
+	private Date rentalReturnDate;
+	private int rentalStatus;
+	private int memberNo;
+	private int bookNo;
+}

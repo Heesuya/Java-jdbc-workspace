@@ -1,0 +1,5 @@
+package jdbc.member.controller;
+
+public class MemberController {
+
+}

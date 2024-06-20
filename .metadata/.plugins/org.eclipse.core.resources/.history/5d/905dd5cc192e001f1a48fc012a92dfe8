@@ -1,0 +1,13 @@
+package kr.co.iei.book.model.service;
+
+import kr.co.iei.book.model.dao.BookDao;
+
+public class BookService {
+	BookDao bookDao;
+
+	public BookService() {
+		super();
+		bookDao = new BookDao();
+	}
+	
+}
