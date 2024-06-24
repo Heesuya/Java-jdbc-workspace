@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import kr.co.iei.book.common.JDBCTemplate;
 import kr.co.iei.book.model.vo.Member;
@@ -55,6 +56,27 @@ public class MemberDao {
 			JDBCTemplate.close(pstmt);
 		}
 		return member;
+	}
+
+	public ArrayList<Member> selectAllMember(Connection conn) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Member> list = new ArrayList<Member>();
+		//memberNo memberId memberPw memberName 
+		//대여번호\t회원명\t제목\t대여일\t반납일\t상태"
+		String qeury = "select rental_no, member_name, book_title, rental_date, rental_return_date, rental_status from member_tbl left join rental_tbl using (member_no) left join book_tbl using (book_no) where member_grade = 1 ";
+		try {
+			pstmt = conn.prepareStatement(qeury);
+			while(rset.next()) {
+				Member member = new Member();
+				member.setRental_no(rset.getInt("rental_no"));
+				member.setMemberName(rset.getString("member_name"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

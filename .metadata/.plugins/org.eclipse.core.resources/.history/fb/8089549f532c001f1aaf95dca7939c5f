@@ -1,8 +1,0 @@
-package kr.co.iei.member.controller;
-
-import java.util.Scanner;
-
-public class MemberController {
-	private Scanner sc = null;
-	private Members
-}

@@ -156,9 +156,15 @@ public class Controller {
 		}
 	}
 	
+	private void bookStatus() {
+		// TODO Auto-generated method stub
+		
+	}
 	private void selectAllMember() {
 		System.out.println("------------ 전체 회원 현황 ------------");
+		ArrayList<Member> list = memberService.selectAllMember();
 		
+		System.out.println("대여번호\t회원명\t제목\t대여일\t반납일\t상");
 	}
 
 	//책 현황 
